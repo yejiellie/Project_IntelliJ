@@ -1,7 +1,6 @@
 package com.study.SpringBoot_Project.service;
 
 import com.study.SpringBoot_Project.mapper.FileMapper;
-import com.study.SpringBoot_Project.vo.Board;
 import com.study.SpringBoot_Project.vo.BoardFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,5 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<BoardFile> boardFile(int boardNo){
         return mapper.boardFile(boardNo);
-    };
-
-
-
+    }
 }

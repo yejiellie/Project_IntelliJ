@@ -19,6 +19,6 @@ mybatis:
   mapper-locations: classpath:mappers/**/*.xml
 
 file:
-  dir:   C:\Users\ellie\SpringBoot_Project\src\main\resources\upload\
+  dir: C:\Users\ellie\SpringBoot_Project\src\main\resources\upload\
   lecture_dir: C:\Users\ellie\SpringBoot_Project\src\main\resources\upload\
   course_dir: C:\Users\ellie\SpringBoot_Project\src\main\resources\upload\

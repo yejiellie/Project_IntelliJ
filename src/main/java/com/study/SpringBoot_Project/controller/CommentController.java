@@ -1,6 +1,5 @@
 package com.study.SpringBoot_Project.controller;
 
-import com.study.SpringBoot_Project.service.BoardService;
 import com.study.SpringBoot_Project.service.CommentService;
 import com.study.SpringBoot_Project.vo.BoardComment;
 import org.springframework.stereotype.Controller;

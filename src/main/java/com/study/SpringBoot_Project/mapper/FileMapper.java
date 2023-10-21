@@ -1,6 +1,5 @@
 package com.study.SpringBoot_Project.mapper;
 
-import com.study.SpringBoot_Project.vo.Board;
 import com.study.SpringBoot_Project.vo.BoardFile;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

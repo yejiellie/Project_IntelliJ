@@ -1,4 +1,4 @@
-package com.study.common;
+package com.study.SpringBoot_Project.common;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpFilter;

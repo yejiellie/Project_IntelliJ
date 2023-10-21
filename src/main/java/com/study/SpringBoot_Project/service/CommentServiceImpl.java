@@ -5,7 +5,6 @@ import com.study.SpringBoot_Project.vo.BoardComment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.mybatis.spring.SqlSessionTemplate;
 
 import java.util.List;
 
