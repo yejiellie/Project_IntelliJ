@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default_layout}">
+<body>
+<th:block layout:fragment="content">
+    <style>
+        #insertdate {
+            justify-content: flex-end;
+            display: flex;
+        }
+        #insertdate > p {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        #pageunder {
+            display: flex;
+            height: 30px;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        #titlecate {
+            display: flex;
+            height: auto;
+            padding-top: 20px;
+        }
+        #totalbtn > button {
+            width: 90px;
+            background-color: white;
+            margin-top: 10px;
+        }
+        .my-hr {
+            border: 0;
+            height: 2px;
+            background: #000000;
+        }
+        section#board-container {
+            margin: 0 auto;
+            text-align: center;
+        }
+        #btn-insert {
+            width: 60px;
+            height: 50px;
+            color: white;
+            background-color: #6f4fee;
+            position: relative;
+            top: -20px;
+        }
+        #tbl-comment {
+            /*border-bottom: 1px solid;*/
+            padding: 10px;
+            text-align: left;
+            line-height: 120%;
+            display: flex;
+            flex-direction: column;
+        }
+        .comment-date {
+            font-size: 10px;
+        }
+        .comment-editor {
+            padding-top: 10px;
+        }
+        #filearea {
+            padding-bottom: 50px;
+            margin: 30px;
+        }
+        #contentnarea {
+            width: 100%;
+            margin: 30px;
+        }
+        #readcount {
+            font-size: 13px;
+        }
+    </style>
+    <div style="padding: 20px">
+        <h2>게시판 - 보기</h2>
+        <div id="pageunder">
+            <h3><th:block th:text="${board.writer}"/></h3>
+            <div id="insertdate">
+                <p><strong>등록일시 : </strong><th:block th:text="${board.createDay}"/></p>
+                <p><strong>수정일시 : </strong>
+                    <th:block th:if="${board.updateDay != null}">
+                        <th:block th:text="${board.updateDay}"/>
+                    </th:block>
+                    <th:block th:if="${board.updateDay == null}">
+                        -
+                    </th:block>
+                </p>
+            </div>
+        </div>
+        <div id="titlecate" style="display: flex; font-weight: bold">
+            <div style="padding-right: 10px">
+                [
+                <th:block th:text="${board.category.cateName}"/>
+                ]
+            </div>
+            <div style="width: 80%">
+                <th:block th:text="${board.title}"/>
+            </div>
+            <div style="width: 10%; text-align: right;margin-top: 1%;" id="readcount">
+                조회수 : <th:block th:text="${board.boardCount}"/>
+            </div>
+        </div>
+        <hr class="my-hr" />
+        <pre id="contentnarea"><span th:text = "${board.content}"/></pre>
+        <div id="filearea">
+            <th:block th:if="${fileList != null}">
+                <th:block th:each="file: ${fileList}">
+                    <div style="padding-bottom: 10px;">
+                        <a th:href="@{|/board/boardFileDown.do?reName=${file.reName}|}" th:text="${file.reName}"></a>
+                    </div>
+                </th:block>
+            </th:block>
+        </div>
+
+            <!--댓글-->
+        <section id="board-container">
+            <div style="background-color: rgb(236, 234, 234)">
+                <th:block th:if="${boardComment != null}">
+                    <th:block th:each="bc: ${boardComment}">
+                        <th:block th:if="${boardNo eq bc.boardNo}">
+                            <div id="tbl-comment">
+                                <sub class="comment-date" th:text="${#dates.format(bc.commentDate, 'yyyy-MM-dd HH:mm')}"></sub>
+                                <sub class="comment" th:text="${bc.content}"></sub>
+                            </div>
+                            <hr>
+                        </th:block>
+                    </th:block>
+                </th:block>
+                <div class="comment-editor">
+                    <form action="/comment/CommentWrite" method="post" onsubmit="return insertComment();">
+                        <textarea id="comment" name="comment" cols="80" rows="3" placeholder="댓글을 입력해주세요"></textarea>
+                        <input type="hidden" name="boardNo" th:value="${boardNo}">
+                        <button type="submit" id="btn-insert">등록</button>
+                    </form>
+                </div>
+            </div>
+            <div id="totalbtn">
+                <button onclick = "location.assign('/board/list.do')">목록</button>
+                <button onclick = "updateBoard()">수정</button>
+                <button onclick = "deleteBoard()">삭제</button>
+            </div>
+        </section>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            //댓글 내용 체크
+            const insertComment = () =>{
+                if($("#comment").val().trim() == ""){
+                    $("#comment").val('');
+                    $("#comment").focus();
+                    alert("댓글 내용을 입력해주세요");
+                    return false;
+                }
+            }
+            //수정하기
+            const updateBoard = () =>{
+                const boardNo = [[${boardNo}]];
+                open("/board/passwordCheckPage.do?boardNo=" + boardNo + "&type=update",
+                    "_blank","width=500,height=250");
+            }
+            //삭제하기
+            const deleteBoard = () => {
+                const boardNo = [[${boardNo}]];
+                open("/board/passwordCheckPage.do?boardNo=" + boardNo + "&type=delete", "_blank", "width=500,height=250");
+            };
+            /*]]>*/
+        </script>
+    </div>
+</th:block>
+</body>
+</html>

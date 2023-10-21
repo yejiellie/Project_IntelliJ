@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default_layout}">
+<body>
+<th:block layout:fragment="content">
+    <style>
+        #tbl-board {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table#tbl-board th {
+            border-bottom: 1px solid;
+            border-top: 1px solid;
+            background-color: rgb(236, 234, 234);
+        }
+        table#tbl-board td {
+            border-bottom: 1px solid;
+            border-top: 1px solid;
+            padding: 5px 0 5px 10px;
+        }
+        #filearea {
+            display: flex;
+            flex-direction: column;
+        }
+        #filearea > input {
+            padding: 5px;
+        }
+        #btn {
+            display: flex;
+            justify-content: space-between;
+            padding: 50px;
+        }
+        #btn > input {
+            width: 90px;
+        }
+    </style>
+
+    <div style="padding: 20px">
+        <h2 style="padding-bottom: 20px">게시판 - 수정</h2>
+        <div id="board-container">
+            <form name="enrollBoard" action="/board/boardUpdate.do" enctype="multipart/form-data"
+                  method="post" onsubmit="return checkinsert();">
+                <table id="tbl-board">
+                    <tr>
+                        <th>카테고리</th>
+                        <td>
+                            <th:block th:text="${board.category.cateName}"/>
+                            <input type="hidden" name="boardNo" th:value="${board.boardNo}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>등록일시</th>
+                        <td><input type="text" th:value="${board.createDay}" readonly style="width: 200px;border: none;outline: none;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>수정일시</th>
+                        <td>
+                            <th:block th:if="${board.updateDay != null}">
+                                <th:block th:text="${board.updateDay}"/>
+                            </th:block>
+                            <th:block th:if="${board.updateDay == null}">
+                                -
+                            </th:block>
+                            <input type="hidden" th:value="${board.updateDay}" style="width: 200px;border: none;outline: none;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>조회수</th>
+                        <td><input type="text" th:value="${board.boardCount}" readonly style="width: 200px;border: none;outline: none;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>작성자<strong style="color: red">*</strong></th>
+                        <td><input type="text" name="writer" id="writer" th:value="${board.writer}" style="width: 200px" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>비밀번호<strong style="color: red">*</strong></th>
+                        <td>
+                            <input type="text" name="boardPw" placeholder="비밀번호" id="boardPw" style="width: 200px" required/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>제목<strong style="color: red">*</strong></th>
+                        <td><input name="title" type="text" th:value="${board.title}" style="width: 95%" required/></td>
+                    </tr>
+                    <tr>
+                        <th>내용<strong style="color: red">*</strong></th>
+                        <td>
+                            <textarea name="content" rows="10" minlength="4" maxlength="2000" style="width: 95%" th:value="${board.content}" required></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>첨부파일</th>
+                        <td>
+                            <div id="filearea">
+                                <div class="file-add">
+                                    <a href="#this" onclick="addFile()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 파일추가</a>
+                                </div>
+                                <div class="file-input" th:each="file : ${fileList}">
+                                    <span th:text="${file.reName}"></span>
+                                    <input type="hidden" name="fileIndex" th:value="${file.fileNo}">
+                                    <button id='file-delete' onclick="deleteremove(event)">X</button>
+                                    <br>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div id="btn">
+                    <input type="button" value="취소" onclick="location.assign('/board/boardDetail.do?boardNo=' + [[${board.boardNo}]])" />
+                    <input type="submit" value="저장" />
+                </div>
+            </form>
+        </div>
+        <script th:inline="javascript">
+            const checkinsert=()=>{
+                const writer=$("#writer").val().trim();
+                const pw=$("#boardPw").val().trim();
+                //작성자 글자 3글자 이상, 5글자 미만
+                if(writer.length<3 || writer.length >=5){
+                    alert("작성자명은 3글자 이상, 5글자 미만으로 입력해야 합니다!");
+                    return false;
+                }
+                //비밀번호 4글자 이상, 16글자 미만
+                //영문,숫자,특수문자 포함
+                const passwordcheck=/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{4,16}$/;
+                if(!passwordcheck.test(pw)){
+                    alert("비밀번호는 영문, 숫자, 특수문자를 포함하고 글자 이상, 16글자 미만이어야 합니다.");
+                    return false;
+                }
+            }
+
+            //파일 삭제 버튼 이벤트
+            function deleteremove(e) {
+                e.preventDefault();
+                deleteFile($(e.target));
+            };
+            //파일 추가하기 버튼을 누르면 태그가 추가된다
+            function addFile() {
+                var str = "<div class='file-input'><input type='file' name='boardFile'><button id='file-delete' onclick='deleteremove(event)''>X</button></div>";
+                $("#filearea").append(str);
+                $("a[id='file-delete']").on("click", function (e) {
+                    e.preventDefault();
+                    deleteFile($(this));
+                });
+            }
+            //파일이름 화면에서 삭제
+            function deleteFile(obj) {
+                obj.parent().remove();
+            }
+
+        </script>
+    </div>
+</th:block>
+</body>
+</html>

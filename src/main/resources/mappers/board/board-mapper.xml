@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.study.SpringBoot_Project.mapper.BoardMapper">
+    <!-- 게시글 전체조회-->
+    <select id="searchAll" resultMap="boardMap">
+        SELECT * FROM board LEFT JOIN category USING(CATE_NO);
+    </select>
+
+    <!--  Board 명칭끼리 매칭해줌  -->
+    <resultMap id="boardMap" type="com.study.SpringBoot_Project.vo.Board">
+        <id property="boardNo" column="BOARD_NO"/>
+        <result property="cateNo" column="CATE_NO"/>
+        <result property="writer" column="WRITER"/>
+        <result property="boardPw" column="BOARD_PW"/>
+        <result property="title" column="TITLE"/>
+        <result property="content" column="CONTENT"/>
+        <result property="createDay" column="CREATE_DATE"/>
+        <result property="updateDay" column="UPDATE_DATE"/>
+        <result property="boardCount" column="BOARD_COUNT"/>
+        <association property="category" javaType="com.study.SpringBoot_Project.vo.Category">
+            <id property="cateNo" column="CATE_NO"/>
+            <result property="cateName" column="CATE_NAME"/>
+        </association>
+    </resultMap>
+
+    <!--전체 카테고리 목록을 가져옴-->
+    <select id="categoryAll" resultMap="categoryMap">
+        SELECT * FROM category;
+    </select>
+
+    <!--  카테고리 매칭해줌  -->
+    <resultMap id="categoryMap" type="com.study.SpringBoot_Project.vo.Category">
+        <id property="cateNo" column="CATE_NO"/>
+        <result property="cateName" column="CATE_NAME"/>
+    </resultMap>
+
+    <!--  첨부파일 게시글 번호만 출력  -->
+    <select id="attachmentlist" resultMap="boardMap">
+        SELECT board_no FROM board JOIN boardfile USING(board_no) GROUP BY BOARD_NO;
+    </select>
+
+
+    <!--  게시글 상세보기  -->
+    <select id="viewDetail" resultMap="boardMap">
+        SELECT * FROM board LEFT JOIN boardfile USING(board_no)
+                            LEFT JOIN category USING(cate_no)
+                 WHERE board_no=#{boardNo}
+    </select>
+
+    <!--  조회수 증가  -->
+    <update id="updateReadCount" parameterType="_int">
+        UPDATE board SET board_count=board_count+1 WHERE board_no=#{boardNo}
+    </update>
+
+
+    <!-- 전체 게시글 수-->
+    <select id="selectBoardCount" resultType="_int">
+        SELECT COUNT(*) FROM board;
+    </select>
+
+    <!-- 게시글 입력   -->
+    <insert id="insertBoard" parameterType="com.study.SpringBoot_Project.vo.Board">
+        INSERT INTO board VALUES(NULL,#{cateNo},#{writer},SHA2(#{boardPw},256),#{title},#{content},NOW(),NULL,DEFAULT);
+        <selectKey keyProperty="boardNo" resultType="_int" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert>
+
+    <!--  비밀번호 확인용 쿼리  -->
+    <select id="passwordCheck" resultMap="boardMap">
+        SELECT * FROM board WHERE board_no=#{boardNo} AND BOARD_PW=SHA2(#{check}, 256)
+    </select>
+
+    <!--  게시글 삭제  -->
+    <delete id="deleteBoard" parameterType="_int">
+        DELETE FROM board WHERE board_no=#{boardNo}
+    </delete>
+
+
+    <!--  게시글 수정  -->
+    <update id="updateBoard" parameterType="com.study.SpringBoot_Project.vo.Board">
+        UPDATE BOARD SET writer=#{writer},board_pw=#{boardPw},title=#{title},content=#{content},updateday=NOW() WHERE board_no=#{boardNo}
+    </update>
+
+
+</mapper>

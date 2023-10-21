@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lagn="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="headerFragment">
+    <div id="container">
+        <meta charset="UTF-8">
+        <title>Hello World</title>
+        <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <style>
+            body{
+                font-family:"휴먼모음T";
+            }
+            div#container{
+                background-color:#F0F0F0;
+                width:100%;
+                margin:0 auto;
+            }
+            header{
+                background-color: rgba(79, 197, 115, 0.95);
+                height:130px;
+                position:relative;
+                padding:10px 0 0 0;
+            }
+            header h1{
+                margin-left : 10px;
+            }
+
+            section#content{
+                background-color:#F5F5F5;
+                float:left;
+                width:100%;
+                min-height:500px;
+            }
+
+            footer{
+                background-color: rgba(79, 197, 115, 0.95);
+                clear:both;
+                height:75px;
+                text-align:center;
+                padding-top:40px;
+            }
+            header nav {background: #39a45a; width:100%; margin-top:40px;}
+            ul.main-nav{
+                display:table;
+                padding:0px;
+                margin:auto;
+            }
+            ul.main-nav li {
+                list-style-type: none;
+                width: 8em;
+                height: 2em;
+                float: left;
+                text-align: center;
+                font-family: "휴먼모음T", sans-serif;
+                border-left: 1px #3cd400 solid;
+                background-color: #39a45a;
+            }
+            ul.main-nav li:last-of-type{border-right:1px #3cd400 solid;}
+            ul.main-nav li a {
+                display: block;
+                padding: 5px;
+                text-decoration: none;
+                color: #292929;
+            }
+            ul.main-nav li:hover{
+                background-color: #1d6403;
+            }
+            ul.main-nav li:hover > a{
+                color:#FFF; /* 글자색*/
+            }
+            a {
+                text-decoration: none;
+            }
+        </style>
+        <header>
+            <h1><a href="/" style="text-decoration:none; color:black;">Hello Servlet</a></h1>
+            <nav>
+                <ul class="main-nav">
+                    <li class="home"><a href="/"><strong>Home</strong></a></li>
+                    <li><a href="/board/list.do"><strong>게시판</strong></a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+</div>
+</html>

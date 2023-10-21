@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script th:inline="javascript">
+        var msg = /*[[${msg}]]*/ '';
+        var loc = /*[[${loc}]]*/ '';
+        if (msg != null){
+            alert(msg);
+        }
+        location.replace([[${#httpServletRequest.getContextPath()}]] + loc);
+    </script>
+</body>
+</html>
